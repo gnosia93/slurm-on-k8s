@@ -298,7 +298,7 @@ aws ec2 describe-instances \
 +---------------------+-----------------------------+------------+-----------------+----------------------------+
 |  i-05885e75c9c56ca1d|  slinky-on-k8s-ng-arm-Node  |  ng-arm    |  None           |  subnet-084967ccbf3f04381  |
 |  i-0a961a083a4b2caf8|  slinky-on-k8s-ng-arm-Node  |  ng-arm    |  None           |  subnet-016c28f36b52c1290  |
-|  i-07789f7b71f1b0e6a|  slinky-code-server-x86        |  None      |  43.203.227.222 |  subnet-0bf25babb2d87bc1b  |
+|  i-07789f7b71f1b0e6a|  slinky-code-server-x86     |  None      |  43.203.227.222 |  subnet-0bf25babb2d87bc1b  |
 +---------------------+-----------------------------+------------+-----------------+----------------------------+
 ```
 
