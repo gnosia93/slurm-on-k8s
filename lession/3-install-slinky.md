@@ -130,7 +130,6 @@ eksctl create iamserviceaccount \
   --region ${AWS_REGION} \
   --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEKS_EBS_CSI_Driver_Policy \
   --approve \
-  --role-only \
   --role-name EBS_CSI_DriverRole-${CLUSTER_NAME}
 ```
 
