@@ -37,3 +37,22 @@ watch -n 1 "fi_info -p efa"
 * 내용: Slurm의 Job ID 기반으로 어떤 팀(또는 사용자)이 자원을 얼마나 썼는지 계산하고, 특정 예산을 초과하면 작업을 강제 종료하거나 알림을 보내는 정책 설정.
 * 핵심: Karpenter의 Termination 정책과 연동하여 '좀비 노드' 방지하기.
 * 내용: AWS FSx for Lustre를 Slurm 노드에 마운트하여 데이터 로딩 속도와 체크포인트 저장 속도를 극대화하는 법.
+---
+
+1. Pod 기반 로그인 노드 (가장 간편한 방식)
+EKS 내부에 slurm-client용 Pod을 하나 띄워두고 kubectl exec로 접속해 사용하는 방식입니다. Slinky Helm 차트에 기본 포함되어 있는 경우가 많습니다.
+
+```
+loginNode:
+  enabled: true
+  image: "slinky-slurm-client:latest"
+  # FSx 마운트 설정을 공유하여 로그인 노드에서도 데이터를 볼 수 있게 함
+  extraVolumeMounts:
+    - name: fsx-storage
+      mountPath: /shared
+```
+
+```
+kubectl exec -it deployment/slurm-login-node -n slurm -- /bin/bash
+
+```
