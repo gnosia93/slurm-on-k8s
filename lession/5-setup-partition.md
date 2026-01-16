@@ -1,6 +1,49 @@
 ## GPU 파티션 만들기 ##
 
-### 1. Cloud-Native 설정 (Helm/K8s) ###
+### 1. 정적 프로비저닝 ###
+1. 노드그룹 생성
+```
+managedNodeGroups:
+  - name: static-p4dn-group
+    instanceType: p4dn.24xlarge
+    minSize: 2
+    maxSize: 2
+    desiredCapacity: 2 # 2대 상시 유지
+    volumeSize: 500
+    efaEnabled: true   # p4dn의 핵심 기능
+    labels:
+      role: slurm-static-gpu # Slinky가 찾을 수 있게 라벨 부여
+    taints:
+      - key: "slinky.io/usage"
+        value: "gpu-task"
+        effect: "NoSchedule"
+
+```
+
+2. Slinky Helm values.yaml 연결
+노드가 이미 떠 있으므로, Slinky에게 "동적으로 띄우지 말고, 이 라벨이 붙은 노드를 파티션으로 써라"고 알려줍니다.
+
+```
+yaml
+clusters:
+  - name: "slinky-cluster"
+    partitions:
+      - name: "static-gpu-partition"
+        # 중요: Karpenter 설정 대신 고정된 노드 선택기 사용
+        nodeSelector:
+          role: slurm-static-gpu
+        tolerations:
+          - key: "slinky.io/usage"
+            operator: "Equal"
+            value: "gpu-task"
+            effect: "NoSchedule"
+        gres: "gpu:8"
+```
+
+
+
+
+### 2. 동적 프로비저닝 ###
 Slinky는 Kubernetes 위에서 Slurm을 돌리는 구조이므로, 파티션 정의는 보통 values.yaml 파일의 clusters 섹션에서 이루어진다.
 
 ```
