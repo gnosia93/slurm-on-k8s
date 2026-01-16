@@ -35,17 +35,17 @@ all*         up   infinite      1   idle slinky-0
 sinfo는 클러스터 내의 노드(Node)와 파티션(Partition) 상태를 확인할 때 사용한다. STATE 값으로는 idle: 대기 중, alloc: 작업 중, down: 장애 발생 등이 있다.
 
 ### 3. 작업 제출 ###
-#### sbatch ####
+#### 1. sbatch ####
 sbatch 는 가장 일반적인 작업 제출 방식으로 쉘 스크립트(.sh)를 파라미터로 사용한다. sbatch -p 옵션으로 sinfo에서 확인한 가용 파티션을 지정할 수 있다.
 ```
 sbatch -p [파티션명] job-script.sh
 ```
-#### salloc / srun ####
+#### 2. salloc / srun ####
 salloc 또는 srun 대화형 작업 실행 명령어로 리소스를 즉시 할당받아 직접 터미널에서 작업하거나 실시간으로 실행 결과를 확인하고 싶을 때 사용한다.
 ```
 srun -p [파티션명] --nodes=1 --pty bash
 ```
-#### squeue ###
+#### 3. squeue ###
 제출한 작업이 대기 중인지 혹은 실행 중인지 확인한다. 
 ```
 squeue -u [사용자ID] 
