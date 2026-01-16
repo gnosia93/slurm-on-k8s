@@ -120,7 +120,7 @@ ADDONS  metrics-server
 ADDONS  vpc-cni
 ```
 
-#### IRSA 생성 ####
+#### 3. IRSA 생성 ####
 IAM 역할 생성 및 AWS 정책 연결 (EKS 전용 서비스 계정 생성) 한다.
 ```
 eksctl create iamserviceaccount \
