@@ -16,7 +16,7 @@
 
 * [C5. 파티션 설정하기](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/5-setup-partition.md)
 
-* [C6. 복원력 및 작업 재시작]
+* [C6. 복원력 및 작업 재시작](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/6-resilliency.md)
 
 * [C7. 작업 모니터링 하기]
 
