@@ -134,6 +134,27 @@ eksctl create iamserviceaccount \
   --role-name EBS_CSI_DriverRole-${CLUSTER_NAME}
 ```
 
+#### 4. 스토리지 클래스 생성 ####
+default 스토리지 클래스를 gp3 타입으로 생성한다.
+```
+cat <<EOF | kubectl apply -f - 
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp3
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3
+  #gp3의 기본 IOPS와 Throughput을 지정할 수 있습니다. (선택 사항)
+  #iopsPerGB: "3000"
+  #throughput: "125"
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+EOF
+```
+
 
 ## 레퍼런스 ##
 * https://github.com/SlinkyProject/slurm-operator
