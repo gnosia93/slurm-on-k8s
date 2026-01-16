@@ -151,6 +151,7 @@ parameters:
   #throughput: "125"
 reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
 EOF
 ```
 생성된 스토리지 클래스를 조회한다. 
