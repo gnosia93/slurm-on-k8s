@@ -35,29 +35,29 @@ all*         up   infinite      1   idle slinky-0
 sinfo는 클러스터 내의 노드(Node)와 파티션(Partition) 상태를 확인할 때 사용한다. STATE 값으로는 idle: 대기 중, alloc: 작업 중, down: 장애 발생 등이 있다.
 
 ### 3. 작업 제출 ###
-#### 1. sbatch ####
+#### sbatch ####
 sbatch 는 가장 일반적인 작업 제출 방식으로 쉘 스크립트(.sh)를 파라미터로 사용한다. sbatch -p 옵션으로 sinfo에서 확인한 가용 파티션을 지정할 수 있다.
 ```
 sbatch -p [파티션명] job-script.sh
 ```
-#### 2. salloc / srun ####
+#### salloc / srun ####
 salloc 또는 srun 대화형 작업 실행 명령어로 리소스를 즉시 할당받아 직접 터미널에서 작업하거나 실시간으로 실행 결과를 확인하고 싶을 때 사용한다.
 ```
 srun -p [파티션명] --nodes=1 --pty bash
 ```
-#### 3. squeue ###
+#### squeue ###
 제출한 작업이 대기 중인지 혹은 실행 중인지 확인한다. 
 ```
 squeue -u [사용자ID] 
 ```
 
-#### 작업 샘플 ####
+#### 실제 훈련 샘플 ####
 ```
 cat <<EOF > train_llama3.sh
 #!/bin/bash
-#SBATCH --job-name=llama3_multinode       # 작업 이름
+#SBATCH --job-name=llama3_training        # 작업 이름
 #SBATCH --nodes=2                         # 사용할 노드 수 (p4dn 2대)
-#SBATCH --ntasks-per-node=1               # 노드당 실행할 작업(프로세스) 수
+#SBATCH --ntasks-per-node=1               # 노드당 실행할 작업(프로세스) 수 (torchrun 의 개수)
 #SBATCH --gres=gpu:8                      # 노드당 할당할 GPU 수 (A100 8개)
 #SBATCH --cpus-per-task=96                # p4dn.24xlarge 전체 CPU 코어 활용
 #SBATCH --partition=[당신의_GPU_파티션]       # sinfo에서 확인한 파티션 이름
@@ -85,7 +85,9 @@ srun torchrun \
     --use_fsdp True
 EOF
 ```
-
+* 최신 PyTorch 분산 학습(torchrun)은 Slurm이 각 노드에 딱 하나의 관리자 프로세스만 띄우기를 권장한다.
+* Slurm은 노드 2개를 빌려오고, 각 노드에서 torchrun이라는 관리자 프로세스를 노드 마다 하나씩 (--ntasks-per-node=1) 실행한다.
+* torchrun이 실행된 후, 해당 노드 안에 있는 8개의 GPU(--nproc_per_node=8)에 맞춰 8개의 실제 학습 프로세스를 알아서 쪼개서 실행 된다.
 ```
 sbatch train_llama3.sh
 ```
