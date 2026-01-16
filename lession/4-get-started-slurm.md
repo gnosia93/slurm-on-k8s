@@ -69,7 +69,6 @@ export MASTER_PORT=12802
 export WORLD_SIZE=$((SLURM_NNODES * 8))   # 총 GPU 수 (2노드 * 8개)
 
 # 2. 모델 및 환경 준비 (예: Hugging Face Llama-3)
-# 추천 모델: meta-llama/Meta-Llama-3-8B (빠른 테스트) 또는 70B (성능 중심)
 MODEL_PATH="meta-llama/Meta-Llama-3-8B"
 
 # 3. 분산 학습 실행 (torchrun 활용)
@@ -80,9 +79,15 @@ srun torchrun \
     --rdzv_backend=c10d \
     --rdzv_endpoint=$MASTER_ADDR:$MASTER_PORT \
     training_script.py \
-    --model_name_or_path $MODEL_PATH \
-    --batch_size 4 \
-    --use_fsdp True
+       --model_name_or_path $MODEL_PATH \
+       --batch_size 4 \
+       --use_fsdp True
+
+# $? 는 쉘에서 앞선 명령어의 종료 상태를 의미 (0이면 성공, 그 외엔 실패)
+if [ $? -ne 0 ]; then
+    echo "⚠️ 작업 실패! 로그를 확인하세요: $SLURM_SUBMIT_DIR/%x_%j.out"
+    # 여기에 Slack Webhook이나 다른 알림 명령어를 넣을 수 있다.
+fi
 EOF
 ```
 * 최신 PyTorch 분산 학습(torchrun)은 Slurm이 각 노드에 딱 하나의 관리자 프로세스만 띄우기를 권장한다.
