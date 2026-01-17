@@ -42,7 +42,8 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
 ```
 cat <<EOF > amx-partition-values.yaml
 nodesets:
-  amx-nodes:  # 노드셋 이름 정의
+  amx-nodes:                   # 노드셋 이름 정의
+    enabled: true              # 명시적으로 활성화
     replicas: 4
     # 노드 선택기 (라벨 기반)
     nodeSelector:
