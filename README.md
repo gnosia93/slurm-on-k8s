@@ -14,9 +14,9 @@
 
 * [C3. slinky 설치하기](https://github.com/gnosia93/slurm-on-k8s/blob/main/lession/3-install-slinky.md)
 
-* [C4. slurm 시작하기](https://github.com/gnosia93/slinky-on-k8s/blob/main/lession/4-get-started-slurm.md)
+* [C4. 파티션 설정하기](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/4-setup-partition.md)
 
-* [C5. 파티션 설정하기](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/5-setup-partition.md)
+* [C5. slurm 기본 명령어 익히기](https://github.com/gnosia93/slinky-on-k8s/blob/main/lession/5-get-started-slurm.md)
 
 * [C6. 복원력 및 작업 재시작](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/6-resilliency.md)
 
