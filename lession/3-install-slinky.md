@@ -202,6 +202,17 @@ replicaset.apps/slurm-operator-56d865fbc7           1         1         1       
 replicaset.apps/slurm-operator-webhook-57cf4d6d85   1         1         1       34m
 ```
 
+### [slurm 오토 스케일링 설정하기](https://slinky.schedmd.com/projects/slurm-operator/en/release-1.0/usage/autoscaling.html) ###
+작동 메커니즘: Slurm → KEDA → Pod → Karpenter
+* Slurm Job 발생: 사용자가 sbatch로 작업을 던집니다. 현재 컴퓨팅 노드가 0개이므로 작업은 PENDING 상태가 됩니다.
+* KEDA의 감지: KEDA가 Slurm의 메트릭(예: squeue 대기 수)을 확인하고, NodeSet(또는 Deployment)의 Replica를 0에서 1 이상으로 올립니다.
+* Pending Pod 생성: NodeSet이 파드를 생성하려고 하지만, 수용할 노드가 없으므로 파드는 Pending 상태로 쿠버네티스 스케줄러에 머뭅니다.
+* Karpenter 출동: Karpenter가 이 Pending 파드를 발견하고, "아, 파드가 필요로 하는 리소스(CPU/GPU 등)에 맞는 실제 노드를 프로비저닝해야겠군!" 하며 인스턴스를 띄웁니다.
+노드가 준비되면 파드가 배치되고, Slurm Worker가 활성화되어 작업을 수행합니다.
+
+>> KEDA 가 핵심 컴포넌트이다...
+
+
 ## 레퍼런스 ##
 * https://github.com/SlinkyProject/slurm-operator
 * https://aws.amazon.com/ko/blogs/containers/running-slurm-on-amazon-eks-with-slinky/
