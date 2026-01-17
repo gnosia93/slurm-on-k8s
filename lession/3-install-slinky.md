@@ -8,9 +8,18 @@ Slurm Slinky 아키텍처를 구성하는 핵심 기술 요소는 etcd, 쿠버�
 
 또한 하이브리드 환경에서 서로 다른 인프라(온프레미스 베어메탈, 클라우드 가상 머신 등)를 동일한 방식으로 제어할 수 있도록 통신 프로토콜을 표준화하여 관리자는 하드웨어의 물리적 위치에 상관없이 단일 Slurm 컨트롤러 하에서 통합된 자원 풀을 운영할 수 있다.
 
+### 작업 처리 워크플로우 (Workflow) ###
+사용자가 작업을 제출하고 완료되기까지의 과정은 다음과 같은 흐름으로 진행된다.
+* 작업 제출: 사용자가 기존과 동일하게 sbatch 명령을 실행하면, 요청이 쿠버네티스 API 서버를 거쳐 Slinky 컨트롤러로 전달된다.
+* 객체 생성 및 저장: 컨트롤러는 해당 작업을 쿠버네티스 CRD 객체로 변환하여 etcd에 기록한다. 이 순간 작업의 상태는 'Pending'이 된다.
+* 스케줄링: 스케줄러 서비스가 etcd의 자원 현황을 확인하여 최적의 노드(CPU/GPU 파티션 등)를 배정한다. 이때 하이브리드 환경이라면 클라우드 노드를 동적으로 프로비저닝하기도 한다.
+* 메시지 전송: 배정된 정보는 고성능 메시지 버스를 통해 해당 노드의 에이전트로 전송된다. 에이전트는 지시를 받아 실제 연산을 수행한다.
+* 상태 업데이트 및 복구: 작업 진행 상황은 역방향으로 전달되어 etcd에 업데이트된다. 만약 실행 중 컨트롤러에 장애가 발생하더라도, 다른 컨트롤러 포드가 etcd에서 상태를 읽어와 작업을 중단 없이 관리하는 Self-healing 과정을 거친다.
+* 완료 및 자원 반납: 작업이 종료되면 결과 데이터가 저장되고, 사용된 자원(특히 클라우드 자원)은 자동으로 회수되어 비용을 최적화한다.
+이러한 구조는 특히 수만 개의 GPU 코어를 동시에 사용하는 거대 모델 학습 환경에서 통신 지연을 최소화하는 데 효과적이다.
 
-## Slurm Slinky 설치하기 ##
-### cert-manager 설치 ###
+### Slurm Slinky 설치하기# ##
+#### cert-manager 설치 ####
 ```
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
@@ -19,14 +28,14 @@ helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager --create-namespace
 ```
 
-### slurm CRD/오퍼레이터 설치 ###
+#### slurm CRD/오퍼레이터 설치 ####
 ```
 helm install slurm-operator-crds oci://ghcr.io/slinkyproject/charts/slurm-operator-crds
 helm install slurm-operator oci://ghcr.io/slinkyproject/charts/slurm-operator \
   --namespace=slinky --create-namespace
 ```
 
-### slurm 클러스터 설치 ###
+#### slurm 클러스터 설치 ####
 ```
 helm install slurm oci://ghcr.io/slinkyproject/charts/slurm \
   --namespace=slurm --create-namespace
