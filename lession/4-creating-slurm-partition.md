@@ -170,6 +170,7 @@ nodesets:
     podSpec:                   
       nodeSelector:                        # node selector 를 이용하여 slurmd 가 설치될 노드를 식별.
         karpenter.sh/nodepool: gpu         # 카펜터 gpu 노드풀로 설정
+        node.kubernetes.io/instance-type: p4d.24xlarge        # 특정 인스턴스로 강제
       tolerations:                                             
         - key: "nvidia.com/gpu"            # 노드그룹에 설정된 taint 를 무력화 시키기 위해서 설정
           operator: "Exists"               # 노드의 테인트는 nvidia.com/gpu=present:NoSchedule 이나,   
