@@ -21,24 +21,39 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
     "architecture": "amx-enabled"
 }
 ```
-
-노드가 이미 생성되어 있으므로 Slinky에게 "동적으로 띄우지 말고, 이 라벨이 붙은 노드를 파티션으로 써라"고 알려준다.
+ng-amx 노드 그룹의 taint 를 확인한다. 
 ```
-cat <<EOF > static-partition-values.yaml
+aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
+  --nodegroup-name ng-amx --query 'nodegroup.taints'
+```
+[결과]
+```
+[
+    {
+        "key": "workload",
+        "value": "slurm",
+        "effect": "NO_SCHEDULE"
+    }
+]
+```
+
+노드가 이미 생성되어 있으므로 Slinky에게 "동적으로 띄우지 말고, 이 라벨이 붙은 노드를 파티션으로 써라"고 알려준다. 이때 Toleration 도 함께 설정한다. 
+파티션 설정에 Toleration이 포함되는 이유는 "해당 파티션으로 제출된 모든 작업(Pod)에 이 출입증을 자동으로 달아주기 위함" 이다. 
+```
+cat <<EOF > amx-partition-values.yaml
 clusters:
   - name: "slinky-cluster"
     partitions:
-      - name: "static-amx-partition"
+      - name: "amx-partition"
         # 중요: Karpenter 설정 대신 고정된 노드 선택기 사용
         nodeSelector:
           - workload-type: slurm-compute
           - architecture: amx-enabled
         tolerations:
-          - key: "slinky.io/usage"
+          - key: "workload"
             operator: "Equal"
-            value: "gpu-task"
+            value: "slurm"
             effect: "NoSchedule"
-        gres: "gpu:8"
 EOF
 ```
 
