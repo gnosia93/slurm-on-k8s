@@ -55,11 +55,14 @@ nodesets:
         effect: "NoSchedule"
     slurmd:
       image:
-        # Slinky 공식 이미지를 명시해야 합니다.
         repository: ghcr.io/slinkyproject/slurmd
         tag: 25.11-ubuntu24.04
-#      logfile: {}
-#      container: {}
+      logfile:
+        path: ""
+      # container 하위도 비워두지 말고 최소 구조를 명시한다.
+      container:
+        resources: {}
+        env: []
 
 partitions:
   amx-partition:
@@ -69,7 +72,7 @@ partitions:
     configMap:
       State: UP
       Default: "NO"
-      MaxTime: UNLIMITED   
+      MaxTime: UNLIMITED  
 EOF
 ```
 
