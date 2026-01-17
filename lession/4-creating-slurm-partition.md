@@ -7,7 +7,7 @@ Slurm에서 파티션(Partition)은 여러 대의 컴퓨팅 노드를 논리적�
 * 우선순위 (Priority): 여러 파티션이 동일한 노드를 공유할 때, 어떤 파티션의 작업을 먼저 실행할지 결정한다. 
 
 ### 1. AMEX CPU 파티션 생성 ###
-ng-amx 매니지드 노드 그룹의 라벨을 확인한다.
+eks 매니지드 노드 그룹 ng-amx 의 라벨을 확인한다.
 ```
 aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
   --nodegroup-name ng-amx --query 'nodegroup.labels' --output text 
@@ -21,7 +21,7 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
     "architecture": "amx-enabled"
 }
 ```
-ng-amx 노드 그룹의 taint 를 확인한다. 
+ng-amx 노드 그룹의 taint 를 확인한다. slurm 전용으로 사용하고자 다음과 같은 taint 를 미리 생성하였다 (eksctl cluster.yaml 확인) 
 ```
 aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
   --nodegroup-name ng-amx --query 'nodegroup.taints'
@@ -37,8 +37,7 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
 ]
 ```
 
-노드가 이미 생성되어 있으므로 Slinky에게 "동적으로 띄우지 말고, 이 라벨이 붙은 노드를 파티션으로 써라"고 알려준다. 이때 Toleration 도 함께 설정한다. 
-파티션 설정에 Toleration이 포함되는 이유는 "해당 파티션으로 제출된 모든 작업(Pod)에 이 출입증을 자동으로 달아주기 위함" 이다. 
+노드가 이미 생성되어 있으므로 Slinky에게 "동적으로 띄우지 말고, 이 라벨이 붙은 노드를 파티션으로 써라"고 알려준다. 이때 파드 스팩에 Toleration 도 함께 설정해야 slurmd 파드가 대상 노드에 스케줄링 될 수 있다.  
 ```
 cat <<EOF > amx-nodeset.yaml
 # nodesets 아래에 바로 이름을 키로 사용합니다 (리스트 '-' 제거)
@@ -48,8 +47,8 @@ nodesets:
     replicas: 4                # count 대신 replicas를 사용 (Slinky 1.0.1 규격)
     updateStrategy:
       type: RollingUpdate
-    podSpec:
-      nodeSelector:
+    podSpec:                   
+      nodeSelector:            # node selector 를 이용하여 slurmd 가 설치될 노드를 식별한다.
         workload-type: "slurm-compute"
         architecture: "amx-enabled"
       tolerations:
@@ -62,9 +61,9 @@ nodesets:
         repository: ghcr.io/slinkyproject/slurmd
         tag: 25.11-ubuntu24.04
       resources:
-        limits:
-          cpu: "30"
-          memory: "120Gi"
+        limits:                         
+          cpu: "30"                        # 32 vCPU (m7i.8xlarge) 
+          memory: "120Gi"                  # 120 Gi 메모리 (m7i.8xlarge)
     # LogFile sidecar configurations.
     logfile:
       image:
