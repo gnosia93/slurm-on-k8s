@@ -48,14 +48,15 @@ nodesets:
     replicas: 4                # count 대신 replicas를 사용 (Slinky 1.0.1 규격)
     updateStrategy:
       type: RollingUpdate
-    nodeSelector:
-      workload-type: "slurm-compute"
-      architecture: "amx-enabled"
-    tolerations:
-      - key: "workload"
-        operator: "Equal"
-        value: "slurm"
-        effect: "NoSchedule"
+    podSpec:
+      nodeSelector:
+        workload-type: "slurm-compute"
+        architecture: "amx-enabled"
+      tolerations:
+        - key: "workload"
+          operator: "Equal"
+          value: "slurm"
+          effect: "NoSchedule"
     slurmd:
       image:
         repository: ghcr.io/slinkyproject/slurmd
