@@ -118,19 +118,6 @@ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output tex
 export CLUSTER_NAME="slurm-on-eks"
 ```
 
-IAM 역할 생성 및 AWS 정책 연결 (EKS 전용 서비스 계정 생성) 한다.
-```
-eksctl create iamserviceaccount \
-  --name ebs-csi-controller-sa \
-  --namespace kube-system \
-  --cluster ${CLUSTER_NAME} \
-  --region ${AWS_REGION} \
-  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEKS_EBS_CSI_Driver_Policy \
-  --approve \
-  --role-name EBS_CSI_DriverRole-${CLUSTER_NAME} \
-  --override-existing-serviceaccounts
-```
-
 default 스토리지 클래스를 gp3 타입으로 생성한다.
 ```
 cat <<EOF | kubectl apply -f - 
@@ -167,4 +154,18 @@ gp3 (default)   ebs.csi.aws.com         Delete          WaitForFirstConsumer   t
 * https://aws.amazon.com/ko/blogs/containers/running-slurm-on-amazon-eks-with-slinky/
 
 
+### todo ###
+아래 IAM 이 필요한지 나중에 테스트.
+IAM 역할 생성 및 AWS 정책 연결 (EKS 전용 서비스 계정 생성) 한다.
+```
+eksctl create iamserviceaccount \
+  --name ebs-csi-controller-sa \
+  --namespace kube-system \
+  --cluster ${CLUSTER_NAME} \
+  --region ${AWS_REGION} \
+  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEKS_EBS_CSI_Driver_Policy \
+  --approve \
+  --role-name EBS_CSI_DriverRole-${CLUSTER_NAME} \
+  --override-existing-serviceaccounts
+```
 
