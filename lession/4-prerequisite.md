@@ -19,11 +19,12 @@ kubectl get daemonset -n nvidia
 [결과]
 ```
 NAME                                              DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
-nvdp-node-feature-discovery-worker                4         4         4       4            4           <none>                        7d15h
-nvdp-nvidia-device-plugin                         0         0         0       0            0           <none>                        7d15h
-nvdp-nvidia-device-plugin-gpu-feature-discovery   0         0         0       0            0           <none>                        7d15h
-nvdp-nvidia-device-plugin-mps-control-daemon      0         0         0       0            0           nvidia.com/mps.capable=true   7d15h
+nvdp-node-feature-discovery-worker                2         2         0       2            0           <none>                        5s
+nvdp-nvidia-device-plugin                         0         0         0       0            0           <none>                        5s
+nvdp-nvidia-device-plugin-gpu-feature-discovery   0         0         0       0            0           <none>                        5s
+nvdp-nvidia-device-plugin-mps-control-daemon      0         0         0       0            0           nvidia.com/mps.capable=true   5s
 ```
+실제 노드의 갯수는 6대 이지만, ng-amx 에 속한 4대의 경우 taint 가 설정되어 있어 nvidia-device-plug-in 데몬셋이 랜딩하지 못한다.
 
 ### 2. efa 디바이스 플러그인 설치 ###
 ```
