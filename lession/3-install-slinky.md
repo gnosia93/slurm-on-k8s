@@ -32,14 +32,18 @@ helm install cert-manager jetstack/cert-manager \
 ```
 helm install slurm-operator-crds oci://ghcr.io/slinkyproject/charts/slurm-operator-crds
 helm install slurm-operator oci://ghcr.io/slinkyproject/charts/slurm-operator \
-  --namespace=slinky --create-namespace
+  --namespace=slinky --create-namespace \
+#  --set autoscaler.enabled=true 
+```
+* 지원되는 value 리스트 확인
+```
+helm get values slurm-operator -n slinky --all
 ```
 
 #### 3. slurm 설치 ####
 ```
 helm install slurm oci://ghcr.io/slinkyproject/charts/slurm \
-  --namespace=slurm --create-namespace \
-  --set autoscaler.enabled=true \
+  --namespace=slurm --create-namespace 
 ```
 [결과]
 ```
