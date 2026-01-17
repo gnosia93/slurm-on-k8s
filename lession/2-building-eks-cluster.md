@@ -188,8 +188,12 @@ managedNodeGroups:                           # 관리형 노드 그룹
     desiredCapacity: 4
     amiFamily: AmazonLinux2023
     privateNetworking: true                  # 이 노드 그룹이 PRIVATE 서브넷만 사용하도록 지정합니다.
+    # 노드 선택을 위한 라벨 추가
+    labels:
+      workload-type: "slurm-compute"
+      architecture: "amx-enabled"
     taints:
-      - key: "partiton"
+      - key: "workload"
         value: "slurm"
         effect: "NoSchedule" 				 # Slurm 작업(toleration 보유) 외에는 이 노드에 배포되지 않음
     iam:
