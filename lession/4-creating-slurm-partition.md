@@ -161,7 +161,6 @@ NVIDIA 및 efa 드바이스 플러그인을 설치하고 카펜터 동적 노드
 
 ```
 cat <<EOF > gpu-nodeset.yaml
-# nodesets 아래에 바로 이름을 키로 사용합니다 (리스트 '-' 제거)
 nodesets:
   ns-gpu:
     enabled: true
@@ -181,8 +180,8 @@ nodesets:
         tag: 25.11-ubuntu24.04
       resources:
         requests:                          # slurmd 를 스케줄링 하면서 리소스를 선점해 놓는다. slurm 이외에 다른 워크로드의 접근을 차단.
-          cpu: "30"                        # 32 vCPU (m7i.8xlarge) 
-          memory: "120Gi"                  # 120 Gi 메모리 (m7i.8xlarge)
+          cpu: "96"                        # 96 vCPU (p4d.24xlarge) 
+          memory: "1152Gi"                 # 1152 Gi 메모리 (p4d.24xlarge)
     # LogFile 사이드카 설정
     logfile:
       image:
@@ -190,18 +189,18 @@ nodesets:
         tag: latest
     # slurm.conf의 NodeName 줄에 들어갈 내용
     extraConfMap:                          
-      CPUs: "32"
-      Features: "amx"
-      RealMemory: "122880"
+      CPUs: "96"
+      RealMemory: "1152Gi"
+      GPUs: "8"
 
 # partitions 하위는 리스트 형식을 유지하되, nodes 이름이 위와 정확히 일치해야 함
 partitions:
   amx:
     enabled: true
     nodesets: 
-      - "ns-amx"
+      - "ns-gpu"
     configMap:
-      Default: "YES"
+      Default: "NO"
       MaxTime: "infinite"
       State: "UP"
 EOF
