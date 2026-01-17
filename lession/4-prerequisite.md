@@ -43,6 +43,7 @@ kubectl get ds aws-efa-k8s-device-plugin -n kube-system
 NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
 aws-efa-k8s-device-plugin   0         0         0       0            0           <none>          13s
 ```
+ng-arm(2대) 및 ng-amx(4대)에 속한 노드들의 경우 efa 를 지원하지 않는 인스턴스이므로 플러그인의 값이 0 으로 표시된다. 
 
 ### 3. GPU 노드풀 생성 ###
 ```
