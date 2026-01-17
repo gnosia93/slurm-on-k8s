@@ -41,43 +41,42 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
 파티션 설정에 Toleration이 포함되는 이유는 "해당 파티션으로 제출된 모든 작업(Pod)에 이 출입증을 자동으로 달아주기 위함" 이다. 
 ```
 cat <<EOF > amx-nodeset.yaml
-slurm:                        # slurm-operator-1.0.1 chart 
-  nodesets:
-    ns-amx:                   # 노드셋 이름
-      count: 4                # desiredCapacity와 동일하게 설정
-      
-      # 1. 식별: 라벨(labels)을 통해 m7i 노드 그룹으로 타겟팅
-      nodeSelector:
-        workload-type: "slurm-compute"
-        architecture: "amx-enabled"
-  
-      # 2. 통과: 테인트(taints)가 걸려 있으므로 용인(toleration) 설정 필요
-      tolerations:
-        - key: "workload"
-          operator: "Equal"
-          value: "slurm"
-          effect: "NoSchedule"
-  
-      slurmd:                   
-        # m7i.8xlarge 사양에 맞는 리소스 할당 (예시)
-        resources:          
-          limits:                      # slurmd 가 리소스를 선전하게 한다.
-            cpu: "30"                  # 32 vCPU 중 OS/Kube 자원 제외
-            memory: "120Gi"            # 128GiB 중 여유 공간 제외
-      
-      # Slurm 내부 노드 설정(slurm.conf)
-      extraConfMap:
-        CPUs: "32"
-        Features: "amx"
-  
-  # 이 부분이 추가되어야 sinfo에 보입니다!
-  partitions:
-    - name: "amx-part"                 # sinfo에 표시될 파티션 이름
-      nodes: ["ns-amx"]                # 위에서 정의한 nodeset 이름과 일치해야 함
-      default: true                    # 기본 파티션으로 설정 (선택 사항)
-      extraConfMap:
-        MaxTime: "infinite"
-        State: "UP"
+nodesets:
+  ns-amx:                   # 노드셋 이름
+    count: 4                # desiredCapacity와 동일하게 설정
+    
+    # 1. 식별: 라벨(labels)을 통해 m7i 노드 그룹으로 타겟팅
+    nodeSelector:
+      workload-type: "slurm-compute"
+      architecture: "amx-enabled"
+
+    # 2. 통과: 테인트(taints)가 걸려 있으므로 용인(toleration) 설정 필요
+    tolerations:
+      - key: "workload"
+        operator: "Equal"
+        value: "slurm"
+        effect: "NoSchedule"
+
+    slurmd:                   
+      # m7i.8xlarge 사양에 맞는 리소스 할당 (예시)
+      resources:          
+        limits:                      # slurmd 가 리소스를 선전하게 한다.
+          cpu: "30"                  # 32 vCPU 중 OS/Kube 자원 제외
+          memory: "120Gi"            # 128GiB 중 여유 공간 제외
+    
+    # Slurm 내부 노드 설정(slurm.conf)
+    extraConfMap:
+      CPUs: "32"
+      Features: "amx"
+
+# 이 부분이 추가되어야 sinfo에 보입니다!
+partitions:
+  - name: "amx-part"                 # sinfo에 표시될 파티션 이름
+    nodes: ["ns-amx"]                # 위에서 정의한 nodeset 이름과 일치해야 함
+    default: true                    # 기본 파티션으로 설정 (선택 사항)
+    extraConfMap:
+      MaxTime: "infinite"
+      State: "UP"
 EOF
 ```
 
