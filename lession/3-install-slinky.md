@@ -28,7 +28,7 @@ helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager --create-namespace
 ```
 
-#### 2. slurm CRD/오퍼레이터 설치 ####
+#### 2. slurm CRD / 오퍼레이터 설치 ####
 ```
 helm install slurm-operator-crds oci://ghcr.io/slinkyproject/charts/slurm-operator-crds
 helm install slurm-operator oci://ghcr.io/slinkyproject/charts/slurm-operator \
