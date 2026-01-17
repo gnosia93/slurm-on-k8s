@@ -41,7 +41,6 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
 파티션 설정에 Toleration이 포함되는 이유는 "해당 파티션으로 제출된 모든 작업(Pod)에 이 출입증을 자동으로 달아주기 위함" 이다. 
 ```
 cat <<EOF > amx-partition-values.yaml
-# amx-partition-values.yaml
 nodesets:
   amx-nodes:
     enabled: true
@@ -54,12 +53,10 @@ nodesets:
         operator: "Equal"
         value: "slurm"
         effect: "NoSchedule"
+    # 최소한의 객체 구조 정의로 타입 에러 방지
     slurmd:
-      logfile:
-        path: ""
-      image:
-        repository: ghcr.io/slinkyproject/slurmd
-        tag: 25.11-ubuntu24.04
+      logfile: {}
+      container: {}
 
 partitions:
   amx-partition:
