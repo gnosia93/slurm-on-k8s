@@ -228,3 +228,10 @@ Slurm이 추적하고 기록(Accounting)할 수 있는 모든 자원을 통칭�
 cpu, mem, node, energy + 모든 GRES 가 포함되는데 주로 관리자가 사용량 제한(Quota)을 걸거나, 나중에 사용자가 자원을 얼마나 썼는지 통계를 낼 때 사용된다.
 AWS 비용 최적화를 위해 "특정 사용자가 GPU(TRES)를 100시간 이상 쓰지 못하게 제한"하는 등의 과금 및 관리 정책에 쓰일 수 있다.
 
+
+## 참고 ##
+#### slurm 차트 value 확인 ####
+```
+helm show values oci://ghcr.io/slinkyproject/charts/slurm | grep -A 50 "partitions"
+```
+
