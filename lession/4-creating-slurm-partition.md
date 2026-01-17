@@ -81,6 +81,9 @@ partitions:
       Default: "YES"
       MaxTime: "infinite"
       State: "UP"
+ updateStrategy:
+      rollingUpdate:
+        maxUnavailable: 25%
 EOF
 ```
 
