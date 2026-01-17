@@ -171,17 +171,16 @@ nodesets:
     podSpec:                   
       nodeSelector:                        # node selector 를 이용하여 slurmd 가 설치될 노드를 식별.
         karpenter.sh/nodepool: gpu         # 카펜터 gpu 노드풀로 설정
-#      tolerations:                         # 노드그룹에 설정된 taint 를 무력화 시키기 위해서 설정
-#        - key: "workload"                  # slurmd 파드가 스케줄링 되면서 자동으로 이 toleration 이 slurmd 파드에 붙는다. 
-#          operator: "Equal"
-#          value: "slurm"
-#          effect: "NoSchedule"
+      tolerations:                                             
+        - key: "nvidia.com/gpu"            # 노드그룹에 설정된 taint 를 무력화 시키기 위해서 설정
+          operator: "Exists"               # 노드의 테인트는 nvidia.com/gpu=present:NoSchedule 이나,   
+          effect: "NoSchedule"             # Exists 연산자로 nvidia.com/gpu 키만 체크     
     slurmd:
       image:
         repository: ghcr.io/slinkyproject/slurmd
         tag: 25.11-ubuntu24.04
       resources:
-        limits:                            # slurmd 를 스케줄링 하면서 리소스를 선점해 놓는다. slurm 이외에 다른 워크로드의 접근을 차단.
+        requests:                          # slurmd 를 스케줄링 하면서 리소스를 선점해 놓는다. slurm 이외에 다른 워크로드의 접근을 차단.
           cpu: "30"                        # 32 vCPU (m7i.8xlarge) 
           memory: "120Gi"                  # 120 Gi 메모리 (m7i.8xlarge)
     # LogFile 사이드카 설정
