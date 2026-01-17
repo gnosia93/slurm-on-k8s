@@ -68,8 +68,9 @@ helm upgrade slurm oci://ghcr.io/slinkyproject/charts/slurm \
 ```
 helm upgrade slurm oci://ghcr.io/slinkyproject/charts/slurm \
   --namespace=slurm \
-  --set metrics.enabled=false \
+  --set slurm.telemetry.enabled=false \
   --set prometheus.serviceMonitor.enabled=false \
+  --set metrics.enabled=false \
   -f amx-partition-values.yaml \
   --reuse-values
 ```
