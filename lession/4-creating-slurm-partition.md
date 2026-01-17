@@ -1,4 +1,4 @@
-## GPU 파티션 만들기 ##
+## 파티션 할당하기 ##
 
 Slurm에서 파티션(Partition)은 여러 대의 컴퓨팅 노드를 논리적으로 묶어 놓은 '자원 그룹'이자, 사용자가 작업을 제출하는 '대기열(Queue)'이다. Slurm 공식 문서(SchedMD)에 따르면 파티션은 작업의 특성이나 하드웨어 사양에 따라 시스템을 효율적으로 나누어 관리하는 핵심 단위로, 다음과 같은 요소로 구성되어져 있다. 
 * 노드 리스트 (Nodes): 해당 파티션에 포함된 실제 서버(컴퓨팅 노드)들의 목록으로 하나의 노드가 여러 파티션에 중복으로 속할 수도 있다.
@@ -6,7 +6,7 @@ Slurm에서 파티션(Partition)은 여러 대의 컴퓨팅 노드를 논리적�
 * 사용자 권한 (AllowGroups): 특정 파티션을 사용할 수 있는 사용자 그룹을 제한하여 보안이나 우선순위를 관리할 수 있다.
 * 우선순위 (Priority): 여러 파티션이 동일한 노드를 공유할 때, 어떤 파티션의 작업을 먼저 실행할지 결정한다. 
 
-### 1. 정적 파티션 생성 ###
+### 1. AMEX CPU 파티션 생성 ###
 ng-amx 매니지드 노드 그룹의 라벨을 확인한다.
 ```
 aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
@@ -150,45 +150,11 @@ PartitionName=amx
    TRES=cpu=128,mem=507024M,node=4,billing=128
 ```
 
-### 2. 동적 프로비저닝 ###
-Slinky는 Kubernetes 위에서 Slurm을 돌리는 구조이므로, 파티션 정의는 보통 values.yaml 파일의 clusters 섹션에서 이루어진다.
+### 2. NVIDIA GPU 파티션 생성 (Karpenter) ###
 
-```
-clusters:
-  - name: "slinky-cluster"
-    partitions:
-      - name: "gpu-partition"
-        instance_types: ["p4dn.24xlarge"] # AWS 인스턴스 타입 지정
-        nodes: 2
-        # EFA 활성화 핵심 설정
-        efa_enabled: true  
-        # 또는 annotation/label로 처리하는 경우
-        labels:
-          ://vpc.amazonaws.com: "true" 
-        gres: "gpu:8"
-      - name: "cpu-partition"
-        instance_types: ["c5.24xlarge"]
-        nodes: 10
-```
-helm 으로 설정을 업그레드 한다.
-```
-helm list -A
-helm upgrade slinky slinky-chart/slinky -f values.yaml --namespace slurm
-```
 
-```
-kubectl logs -l app.kubernetes.io/name=slinky-controller -n slurm
-```
-터미널에서 sinfo를 입력하여 gpu-partition과 cpu-partition이 리스트에 뜨는지 확인한다.
-```
-sinfo
-```
-사양이 GRES나 TRES에 제대로 반영되었는지 확인한다.
-```
-scontrol show partition gpu-partition
-```
 
-### 2. 동적 노드 프로비저닝 (Auto-scaling) ###
+
 Slinky는 Slurm의 작업 요청을 Kubernetes의 Pod 요청으로 변환하고, 이때 Karpenter(카펜터)가 이 Pod을 보고 "p4dn 2대가 필요하네?"라며 AWS EC2를 즉시 생성하여 클러스터에 붙인다.
 sinfo에서 확인했을 때 파티션 상태가 idle 혹은 cloud로 보일 수 있는데, 이는 노드가 현재는 없지만, 작업 제출 시 자동으로 생성된다는 뜻이다.
 GPU 파티션 설정 시 AWS EFA(Elastic Fabric Adapter) 활성화 옵션이 파티션 정의에 포함되어 있는지 꼭 확인해야 한다.
