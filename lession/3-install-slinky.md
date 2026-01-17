@@ -118,22 +118,6 @@ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output tex
 export CLUSTER_NAME="slinky-on-k8s"
 ```
 
-#### Role 및 IRSA 생성 ####
-IAM 역할 생성 및 AWS 정책 연결 (EKS 전용 서비스 계정 생성) 한다.
-```
-eksctl create iamserviceaccount \
-  --name ebs-csi-controller-sa \
-  --namespace kube-system \
-  --cluster ${CLUSTER_NAME} \
-  --region ${AWS_REGION} \
-  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEKS_EBS_CSI_Driver_Policy \
-  --approve \
-  --role-name EBS_CSI_DriverRole-${CLUSTER_NAME}
-```
-* 클라우드 포메이션 에러가 발생하였다. 콘솔에서 확인하고 재설치 해야 한다..
-
-
-#### 스토리지 클래스 생성 ####
 default 스토리지 클래스를 gp3 타입으로 생성한다.
 ```
 cat <<EOF | kubectl apply -f - 
@@ -168,3 +152,20 @@ gp3 (default)   ebs.csi.aws.com         Delete          WaitForFirstConsumer   t
 ## 레퍼런스 ##
 * https://github.com/SlinkyProject/slurm-operator
 * https://aws.amazon.com/ko/blogs/containers/running-slurm-on-amazon-eks-with-slinky/
+
+
+### todo ###
+sc 설정시 아래 과정이 필요한지는 미지수.. 나중에 확인한다..
+#### Role 및 IRSA 생성 ####
+IAM 역할 생성 및 AWS 정책 연결 (EKS 전용 서비스 계정 생성) 한다.
+```
+eksctl create iamserviceaccount \
+  --name ebs-csi-controller-sa \
+  --namespace kube-system \
+  --cluster ${CLUSTER_NAME} \
+  --region ${AWS_REGION} \
+  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEKS_EBS_CSI_Driver_Policy \
+  --approve \
+  --role-name EBS_CSI_DriverRole-${CLUSTER_NAME}
+```
+* 클라우드 포메이션 에러가 발생하였다. 콘솔에서 확인하고 재설치 해야 한다..
