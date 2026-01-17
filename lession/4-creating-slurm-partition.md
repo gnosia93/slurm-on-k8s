@@ -46,6 +46,8 @@ nodesets:
   ns-amx:
     enabled: true
     replicas: 4                # count 대신 replicas를 사용 (Slinky 1.0.1 규격)
+    updateStrategy:
+      rollingUpdate
     nodeSelector:
       workload-type: "slurm-compute"
       architecture: "amx-enabled"
@@ -81,9 +83,6 @@ partitions:
       Default: "YES"
       MaxTime: "infinite"
       State: "UP"
-updateStrategy:
-  rollingUpdate:
-    maxUnavailable: 25%
 EOF
 ```
 
