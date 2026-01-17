@@ -42,39 +42,32 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
 ```
 cat <<EOF > amx-partition-values.yaml
 nodesets:
-  slurmd:  # 노드셋 이름을 기본값인 slurmd로 설정하여 안정성 확보
-    enabled: true
-    replicas: 4
+  amx-compute-nodes:  # 노드셋 이름
+    count: 4          # desiredCapacity와 동일하게 설정
+    
+    # 1. 식별: 라벨(labels)을 통해 m7i 노드 그룹으로 타겟팅
     nodeSelector:
-      workload-type: slurm-compute
-      architecture: amx-enabled
+      workload-type: "slurm-compute"
+      architecture: "amx-enabled"
+
+    # 2. 통과: 테인트(taints)가 걸려 있으므로 용인(toleration) 설정 필요
     tolerations:
       - key: "workload"
         operator: "Equal"
         value: "slurm"
         effect: "NoSchedule"
-    # 아래 slurmd 하위 구조가 59라인 에러를 해결하는 핵심입니다.
-    slurmd:
-      image:
-        repository: ghcr.io/slinkyproject/slurmd
-        tag: 25.11-ubuntu24.04
-      logfile:
-        path: "/var/log/slurm/slurmd.log"
-      container:
-        resources: {}
-        env: []
-        args: []
-        port: 6818
 
-partitions:
-  amx-partition:
-    enabled: true
-    nodesets:
-      - slurmd
-    configMap:
-      State: UP
-      Default: "NO"
-      MaxTime: UNLIMITED
+    slurmd:
+      # m7i.8xlarge 사양에 맞는 리소스 할당 (예시)
+      resources:
+        limits:
+          cpu: "30"      # 32 vCPU 중 OS/Kube 자원 제외
+          memory: "120Gi" # 128GiB 중 여유 공간 제외
+    
+    # Slurm 내부 노드 설정(slurm.conf)
+    extraConfMap:
+      CPUs: "32"
+      Features: "amx"
 EOF
 ```
 
