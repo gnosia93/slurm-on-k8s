@@ -44,14 +44,14 @@ cat <<EOF > amx-nodeset.yaml
 nodesets:
   ns-amx:
     enabled: true
-    replicas: 4                # count 대신 replicas를 사용 (Slinky 1.0.1 규격)
+    replicas: 4                          # count 대신 replicas를 사용 (Slinky 1.0.1 규격)
     updateStrategy:
       type: RollingUpdate
     podSpec:                   
-      nodeSelector:            # node selector 를 이용하여 slurmd 가 설치될 노드를 식별한다.
+      nodeSelector:                      # node selector 를 이용하여 slurmd 가 설치될 노드를 식별한다.
         workload-type: "slurm-compute"
         architecture: "amx-enabled"
-      tolerations:
+      tolerations:            
         - key: "workload"
           operator: "Equal"
           value: "slurm"
@@ -61,17 +61,19 @@ nodesets:
         repository: ghcr.io/slinkyproject/slurmd
         tag: 25.11-ubuntu24.04
       resources:
-        limits:                         
+        limits:                            # slurmd 를 스케줄링 하면서 리소스를 선점해 놓는다. slurm 이외에 다른 워크로드의 접근을 차단.
           cpu: "30"                        # 32 vCPU (m7i.8xlarge) 
           memory: "120Gi"                  # 120 Gi 메모리 (m7i.8xlarge)
-    # LogFile sidecar configurations.
+    # LogFile 사이드카 설정
     logfile:
       image:
         repository: docker.io/library/alpine
         tag: latest
-    extraConfMap:
+    # slurm.conf의 NodeName 줄에 들어갈 내용
+    extraConfMap:                          
       CPUs: "32"
       Features: "amx"
+      RealMemory: "122880"
 
 # partitions 하위는 리스트 형식을 유지하되, nodes 이름이 위와 정확히 일치해야 함
 partitions:
