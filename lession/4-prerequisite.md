@@ -113,6 +113,18 @@ EOF
 ```
 kubectl apply -f nodepool-gpu.yaml
 ```
+노드 클래스와 노드풀의 READY 필드가 True 임을 확인한다. 혹시 False 로 표시되면 해당 객체를 describe 해서 원인을 파악해야 한다. (예 - kubectl describe ec2nodeclass)
+```
+kubectl get ec2nodeclass,nodepool
+```
+[결과]
+``` 
+NAME                                 READY   AGE
+ec2nodeclass.karpenter.k8s.aws/gpu   True    3m44s
+
+NAME                        NODECLASS   NODES   READY   AGE
+nodepool.karpenter.sh/gpu   gpu         0       True    3m44s
+```
 
 ## 테스트 하기 ##
 
