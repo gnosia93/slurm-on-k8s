@@ -13,7 +13,7 @@ variable "key_name" {
 
 variable "cluster_name" {
   type        = string
-  default     = "slinky-on-k8s"
+  default     = "slurm-on-eks"
 }
 
 variable "vpc_cidr_block" {
@@ -31,7 +31,7 @@ variable "graviton_type" {
 variable "x86_type" {
   description = "EC2 Instance Type (x86)"
   type        = string
-  default     = "c6i.4xlarge"
+  default     = "c7i.4xlarge"
 }
 
 # 공인 IP 확인
