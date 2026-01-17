@@ -158,6 +158,7 @@ NVIDIA 및 efa 드바이스 플러그인을 설치하고 카펜터 동적 노드
 * https://github.com/gnosia93/slurm-on-eks/blob/main/lession/4-prerequisite.md
 
 #### GPU 파티션 생성하기 ####
+
 ```
 cat <<EOF > gpu-nodeset.yaml
 # nodesets 아래에 바로 이름을 키로 사용합니다 (리스트 '-' 제거)
@@ -168,14 +169,13 @@ nodesets:
     updateStrategy:
       type: RollingUpdate
     podSpec:                   
-      nodeSelector:                        # node selector 를 이용하여 slurmd 가 설치될 노드를 식별한다.
-        workload-type: "slurm-compute"     # workoad-type 라벨
-        architecture: "amx-enabled"        # architecture 라벨 
-      tolerations:                         # 노드그룹에 설정된 taint 를 무력화 시키기 위해서 설정
-        - key: "workload"                  # slurmd 파드가 스케줄링 되면서 자동으로 이 toleration 이 slurmd 파드에 붙는다. 
-          operator: "Equal"
-          value: "slurm"
-          effect: "NoSchedule"
+      nodeSelector:                        # node selector 를 이용하여 slurmd 가 설치될 노드를 식별.
+        karpenter.sh/nodepool: gpu         # 카펜터 gpu 노드풀로 설정
+#      tolerations:                         # 노드그룹에 설정된 taint 를 무력화 시키기 위해서 설정
+#        - key: "workload"                  # slurmd 파드가 스케줄링 되면서 자동으로 이 toleration 이 slurmd 파드에 붙는다. 
+#          operator: "Equal"
+#          value: "slurm"
+#          effect: "NoSchedule"
     slurmd:
       image:
         repository: ghcr.io/slinkyproject/slurmd
