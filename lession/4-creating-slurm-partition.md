@@ -205,9 +205,11 @@ partitions:
       State: "UP"
 EOF
 ```
-
+slurm 클러스터에 gpu 노드셋을 추가한다. 
 ```
-kubectl appl -f gpu-nodeset.yaml
+helm upgrade --install slurm oci://ghcr.io/slinkyproject/charts/slurm \
+  --reuse-values \
+  --namespace=slurm -f gpu-nodeset.yaml
 ```
 
 
