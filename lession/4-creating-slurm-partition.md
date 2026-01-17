@@ -57,12 +57,14 @@ nodesets:
       image:
         repository: ghcr.io/slinkyproject/slurmd
         tag: 25.11-ubuntu24.04
+      # 템플릿이 참조하는 .path 키를 명시적으로 생성하여 Map 타입을 강제함
       logfile:
         path: ""
-      # container 하위도 비워두지 말고 최소 구조를 명시한다.
+      # 다른 타입 에러 방지를 위해 container 하위 구조도 명시함
       container:
         resources: {}
         env: []
+        args: []
 
 partitions:
   amx-partition:
