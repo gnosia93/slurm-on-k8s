@@ -238,3 +238,7 @@ provider: efa
 ```
 * 성공 시: provider: efa, fabric: efa와 같은 정보가 상세하게 출력된다.
 * 실패 시: fi_info 결과에 아무것도 나오지 않거나 에러가 발생한다. 이 경우 보안 그룹의 인/아웃 바운드 셀프 참조 존재여부를 확인한다. 
+
+### 노드 확인 하기 ###
+eks-node-viewer 로 카펜터가 동적으로 할당한 노드를 쉽게 확인할 수 있다. 
+![](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/images/eks-node-viewer.png)
