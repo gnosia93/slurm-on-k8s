@@ -205,6 +205,8 @@ iam:
 
 karpenter:
   version: "${KARPENTER_VERSION}"
+  createServiceAccount: true # Karpenter용 IAM Role 자동 생성
+  withInterruptionQueue: true # SQS 대기열 및 EventBridge 규칙 자동 생성
 EOF
 ```
 ```
