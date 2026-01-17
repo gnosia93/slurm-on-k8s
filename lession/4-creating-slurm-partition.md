@@ -99,10 +99,23 @@ helm upgrade --install slurm oci://ghcr.io/slinkyproject/charts/slurm \
   --namespace=slurm -f amx-nodeset.yaml
 ```
 
-오퍼레이터 로그에 오류가 없는지 확인한다.
+slurm 오퍼레이터 로그에 오류가 없는지 확인한다.
 ```
 kubectl logs -n slinky deployment/slurm-operator
 ```
+파드가 대상 노드 그룹의 노드들에 제대로 스케줄링 되었는지 확인한다.
+```
+kubectl get pods -n slurm -l app.kubernetes.io/instance=slurm-worker-ns-amx 
+```
+[결과]
+```
+NAME                    READY   STATUS    RESTARTS   AGE
+slurm-worker-ns-amx-0   2/2     Running   0          4m44s
+slurm-worker-ns-amx-1   2/2     Running   0          4m44s
+slurm-worker-ns-amx-2   2/2     Running   0          4m44s
+slurm-worker-ns-amx-3   2/2     Running   0          4m44s
+```
+
 slurmctld 파드로 로그인하여 신규로 추가된 파티션을 확인하다.
 ```
 kubectl exec -it slurm-controller-0 -n slurm -c slurmctld -- /bin/bash
