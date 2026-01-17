@@ -72,7 +72,8 @@ nodesets:
 # 이 부분이 추가되어야 sinfo에 보입니다!
 partitions:
   - name: "amx-part"                 # sinfo에 표시될 파티션 이름
-    nodes: ["ns-amx"]                # 위에서 정의한 nodeset 이름과 일치해야 함
+    nodes:
+      - ns-amx                       # 위에서 정의한 nodeset 이름과 일치해야 함
     default: true                    # 기본 파티션으로 설정 (선택 사항)
     extraConfMap:
       MaxTime: "infinite"
