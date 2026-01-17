@@ -204,7 +204,7 @@ replicaset.apps/slurm-operator-webhook-57cf4d6d85   1         1         1       
 ## 레퍼런스 ##
 * https://github.com/SlinkyProject/slurm-operator
 * https://aws.amazon.com/ko/blogs/containers/running-slurm-on-amazon-eks-with-slinky/
-
+* https://slinky.schedmd.com/projects/slurm-operator/en/release-1.0/usage/autoscaling.html
 
 ### todo ###
 아래 IAM 이 필요한지 나중에 테스트.
