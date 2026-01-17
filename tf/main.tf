@@ -146,7 +146,7 @@ data "aws_ami" "al2023_x86_64" {
 
 resource "aws_security_group" "instance_sg" {
   vpc_id = aws_vpc.main.id
-  name   = "eks-host-sg"
+  name   = "ec2-host-sg"
 
   # SSH 접속 허용
   ingress {
@@ -195,43 +195,6 @@ resource "aws_security_group" "instance_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-
-/*
-resource "aws_instance" "graviton_box" {
-  ami                         = data.aws_ami.al2023_arm64.id
-  instance_type               = var.graviton_type
-  subnet_id                   = aws_subnet.public[0].id
-  vpc_security_group_ids      = [aws_security_group.instance_sg.id]
-  associate_public_ip_address = true
-  key_name                    = var.key_name
-
-  # IAM Instance Profile 연결 <--- EC2에 권한을 부여합니다.
-  iam_instance_profile = aws_iam_instance_profile.eks_creator_profile.name
-
-  // 루트 볼륨 크기를 30GB로 설정
-  root_block_device {
-    volume_size = 30 # GiB 단위
-    volume_type = "gp3" # 최신 gp3 볼륨 타입 사용
-  }
-
-  user_data = <<_DATA
-#!/bin/bash
-sudo -u ec2-user -i <<'EC2_USER_SCRIPT'
-curl -fsSL https://code-server.dev/install.sh | sh && sudo systemctl enable --now code-server@ec2-user
-sleep 5
-sed -i 's/127.0.0.1:8080/0.0.0.0:9090/g; s/auth: password/auth: none/g' /home/ec2-user/.config/code-server/config.yaml
-EC2_USER_SCRIPT
-
-echo 'export PS1="$(uname -m) \$ "' >> /home/ec2-user/.bashrc
-sudo systemctl restart code-server@ec2-user
-_DATA
-
-  tags = {
-    Name = "aoe-code-server-graviton"
-  }
-}
-*/
-
 
 resource "aws_instance" "x86_box" {
   ami                         = data.aws_ami.al2023_x86_64.id
