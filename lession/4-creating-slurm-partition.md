@@ -164,7 +164,7 @@ cat <<EOF > gpu-nodeset.yaml
 nodesets:
   ns-gpu:
     enabled: true
-    replicas: 0                            # 카펜터에 의한 동적 프로비저닝이므로 0 으로 설정
+    replicas: 1                            # 카펜터에 의한 동적 프로비저닝이므로 0 으로 설정
     updateStrategy:
       type: RollingUpdate
     podSpec:                   
