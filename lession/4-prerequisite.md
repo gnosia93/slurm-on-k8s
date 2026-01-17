@@ -1,5 +1,4 @@
-## [디바이스 플러그인 설치](https://docs.aws.amazon.com/eks/latest/userguide/ml-eks-k8s-device-plugin.html) ##
-
+### [1. NVIDIA 디바이스 플러그인 설치](https://docs.aws.amazon.com/eks/latest/userguide/ml-eks-k8s-device-plugin.html) ###
 ```
 helm repo add nvdp https://nvidia.github.io/k8s-device-plugin
 helm repo update
@@ -23,9 +22,25 @@ nvdp-nvidia-device-plugin-gpu-feature-discovery   0         0         0       0 
 nvdp-nvidia-device-plugin-mps-control-daemon      0         0         0       0            0           nvidia.com/mps.capable=true   7d15h
 ```
 
-## efa 플러그인 설치 ##
+### 2. efa 디바이스 플러그인 설치 ###
+```
+helm repo add eks https://aws.github.io/eks-charts
+helm install aws-efa-k8s-device-plugin eks/aws-efa-k8s-device-plugin --namespace kube-system
 
-## GPU 노드풀 생성 ##
+kubectl patch ds aws-efa-k8s-device-plugin -n kube-system --type='json' -p='[
+  {"op": "add", "path": "/spec/template/spec/tolerations/-", "value": {"operator": "Exists"}}
+]'
+
+kubectl get ds aws-efa-k8s-device-plugin -n kube-system
+```
+[결과]
+```
+NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+aws-efa-k8s-device-plugin   0         0         0       0            0           <none>          13s
+```
+
+
+### 3. GPU 노드풀 생성 ###
 ```
 cat <<EOF > nodepool-gpu.yaml 
 apiVersion: karpenter.sh/v1
