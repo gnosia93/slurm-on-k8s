@@ -1,4 +1,4 @@
-### [slurm 오토 스케일링 설정하기](https://slinky.schedmd.com/projects/slurm-operator/en/release-1.0/usage/autoscaling.html) ###
+### [Nodeset 오토스케일링을 위한 KEDA 설치](https://slinky.schedmd.com/projects/slurm-operator/en/release-1.0/usage/autoscaling.html) ###
 slrum 의 오토 스케일링, 정확하게는 slurm 파드의 오토 스케일링은 KEDA, Prometheus, Metric 서버 기반으로 동작을 한다. slurm job 이 생성되었을때 Karpenter 까지 연결되는 작동 메커니즘은 다음과 같다. 
 
 #### 작동 메커니즘: Slurm → KEDA → Pod → Karpenter ####
