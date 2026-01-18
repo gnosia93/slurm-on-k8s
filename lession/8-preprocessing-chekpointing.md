@@ -33,8 +33,13 @@ for i in range(num_files):
 
 print("Done! Now you can run 'sbatch preprocess.sh'")
 ```
+* S3 버킷으로 업로드 한다. 
+
 
 ### 2. 토크나이징(Tokenizing) ###
+
+* lsutre 를 설치하여 S3 버킷으로 부터 데이터를 읽은 후 전처리
+* 다시 S3 버킷에 데이터를 저장한다. 
 
 [preprocess.py]
 ```
@@ -128,19 +133,9 @@ scancel <JOB_ID>            # 특정 작업 ID 취소
 scancel -u $USER            # 내 모든 작업 취소
 ```
 
+## 3. 훈련 하기 ##
+* lustre 에 저장된 파일을 읽어온다. 
 
-## 체크포인팅 ##
-
-
-
-
-
-
-
-## 부록 ##
-
-
-Llama 3와 같은 대규모 모델 학습 시, 전처리된 WebDataset(.tar) 파일을 가장 효율적으로 읽어오는 방법은 webdataset 라이브러리를 사용하는 것입니다. 이 방식은 데이터를 로컬에 다운로드하지 않고 FSx for Lustre에서 직접 스트리밍하므로 메모리 점유율이 매우 낮습니다.
 ```
 import torch
 import webdataset as wds
@@ -185,6 +180,7 @@ for batch in train_loader:
     # batch['labels']: [batch_size, sequence_length] (Causal LM용 자동 생성)
     print(f"Batch shape: {batch['input_ids'].shape}")
     break
+...
 ```
 FSx for Lustre 활용 시 핵심 성능 포인트
 * split_by_node & split_by_worker: 멀티 GPU 학습(DDP/DeepSpeed) 시, WebDataset의 분산 처리 기능을 사용해야 각 GPU가 서로 다른 데이터를 읽어 중복 학습을 방지합니다.
