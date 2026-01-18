@@ -25,6 +25,12 @@
 
 * [C7. 작업 모니터링 하기](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/7-job-monitoring.md)
 
+* [C8. 데이터 전처리]()
+
 ---
 * 스토리지 ??? : Llama 3 같은 대용량 모델은 데이터 로딩 속도가 중요.
+* 3. 고속 전처리 전략 (Slurm Job 활용)
+FSx for Lustre는 수백 Gbps의 대역폭을 제공하므로, 전처리 작업 자체를 Slurm의 CPU 전용 파티션에서 병렬로 돌리는 것이 좋습니다.
+방법: Raw 데이터를 FSx 위에서 병렬로 읽어 토크나이징(Tokenizing)하거나 TFRecord/WebDataset 형태로 변환한 뒤, 동일한 FSx 경로에 저장합니다.
+성능 팁: Lustre 스트라이핑(Striping) 설정을 통해 대용량 파일을 여러 객체 저장소에 분산 저장하면 대규모 GPU 학습 시 읽기 성능이 극대화됩니다.
 
