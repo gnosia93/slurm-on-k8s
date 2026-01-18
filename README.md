@@ -20,9 +20,9 @@
   * AMX Lllama
   * GPU Lllama
 
-* [C6. 복원력 및 작업 재시작](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/6-resilliency.md)
+* [C6. 복원력 및 작업 재시작](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/6-resilliency.md)
 
-* [C7. 작업 모니터링 하기](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/7-job-monitoring.md)
+* [C7. 작업 모니터링 하기](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/7-job-monitoring.md)
 
 * [C8. 데이터 전처리와 체크포인팅](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/8-preprocessing-chekpointing.md)
 
