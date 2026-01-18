@@ -1,5 +1,41 @@
 ## 데이터 전처리 ##
 
+### 데이터 수집 ###
+```
+import os
+from datasets import load_dataset
+
+# 1. 데이터셋 로드
+print("Downloading dataset...")
+dataset = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
+
+# 2. 저장 경로 설정
+raw_dir = "/data/raw"
+os.makedirs(raw_dir, exist_ok=True)
+
+# 3. 데이터를 10개의 파일로 쪼개서 저장
+num_files = 10
+lines_per_file = len(dataset["text"]) // num_files
+
+for i in range(num_files):
+    file_path = os.path.join(raw_dir, f"wiki_{i:02d}.txt")
+    start_idx = i * lines_per_file
+    end_idx = (i + 1) * lines_per_file if i != num_files - 1 else len(dataset["text"])
+    
+    with open(file_path, "w", encoding="utf-8") as f:
+        # 지정된 범위의 데이터만 저장
+        for text in dataset["text"][start_idx:end_idx]:
+            text = text.strip()
+            if text:
+                f.write(text + "\n")
+    
+    print(f"Saved: {file_path}")
+
+print("Done! Now you can run 'sbatch preprocess.sh'")
+```
+
+### 토크나이징(Tokenizing) ###
+
 [preprocess.py]
 ```
 import os
@@ -94,8 +130,8 @@ scancel -u $USER            # 내 모든 작업 취소
 
 
 
+## 훈련 ##
 
----
 Llama 3와 같은 대규모 모델 학습 시, 전처리된 WebDataset(.tar) 파일을 가장 효율적으로 읽어오는 방법은 webdataset 라이브러리를 사용하는 것입니다. 이 방식은 데이터를 로컬에 다운로드하지 않고 FSx for Lustre에서 직접 스트리밍하므로 메모리 점유율이 매우 낮습니다.
 ```
 import torch
