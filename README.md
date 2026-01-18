@@ -12,7 +12,7 @@
 
 * [C3. slinky 설치하기](https://github.com/gnosia93/slurm-on-k8s/blob/main/lesson/3-install-slinky.md)
 
-* [C4. 파티션(큐) 할당하기 - 작성중](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/4-creating-slurm-partition.md)
+* [C4. 파티션(큐) 할당하기 - 작성중](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/4-creating-slurm-partition.md)
 
 * C5. 작업 제출하기
   * AMX Lllama 전처리
