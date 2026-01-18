@@ -1,6 +1,6 @@
 ## 데이터 전처리 ##
 
-### 데이터 수집 ###
+### 1. 데이터 수집 ###
 ```
 import os
 from datasets import load_dataset
@@ -34,7 +34,7 @@ for i in range(num_files):
 print("Done! Now you can run 'sbatch preprocess.sh'")
 ```
 
-### 토크나이징(Tokenizing) ###
+### 2. 토크나이징(Tokenizing) ###
 
 [preprocess.py]
 ```
@@ -129,8 +129,16 @@ scancel -u $USER            # 내 모든 작업 취소
 ```
 
 
+## 체크포인팅 ##
 
-## 훈련 ##
+
+
+
+
+
+
+## 부록 ##
+
 
 Llama 3와 같은 대규모 모델 학습 시, 전처리된 WebDataset(.tar) 파일을 가장 효율적으로 읽어오는 방법은 webdataset 라이브러리를 사용하는 것입니다. 이 방식은 데이터를 로컬에 다운로드하지 않고 FSx for Lustre에서 직접 스트리밍하므로 메모리 점유율이 매우 낮습니다.
 ```
