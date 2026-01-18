@@ -8,6 +8,32 @@
 sbatch --dependency=afterok:<JobID> train.sh
 ```
 
+작업 제출 후 squeue 명령어를 입력하면, 의존성이 걸린 뒤쪽 작업들은 (Dependency)라는 상태 메시지와 함께 대기(PD) 상태로 표시되는 것을 확인할 수 있다.
+```
+#!/bin/bash
+
+# 1. 데이터 전처리 단계 (AMX 파티션 활용)
+# --parsable 옵션은 Job ID만 깔끔하게 반환하게 한다.
+PRE_JOB_ID=$(sbatch --parsable --partition=amx-partition preprocess.sh)
+echo "Step 1: Preprocessing submitted (Job ID: ${PRE_JOB_ID})"
+
+# 2. 모델 학습 단계 (GPU 파티션 활용)
+# --dependency=afterok:<JobID> 는 앞선 작업이 에러 없이 끝나야 실행됨을 의미한다.
+TRAIN_JOB_ID=$(sbatch --parsable --partition=gpu-partition --dependency=afterok:${PRE_JOB_ID} train.sh)
+echo "Step 2: Training submitted (Job ID: ${TRAIN_JOB_ID})"
+
+# 3. 결과 정리 및 평가 단계
+FINAL_JOB_ID=$(sbatch --parsable --partition=amx-partition --dependency=afterok:${TRAIN_JOB_ID} postprocess.sh)
+echo "Step 3: Post-processing submitted (Job ID: ${FINAL_JOB_ID})"
+
+echo "------------------------------------------------"
+echo "Full pipeline has been queued successfully."
+echo "Use 'squeue' to monitor the dependency chain."
+```
+* preprocess.sh: AMX 파티션에서 데이터 전처리 수행
+* train.sh: GPU 파티션에서 모델 학습 수행
+* postprocess.sh: 결과 데이터 정리 및 리포트 생성
+
 #### 2. 이기종 자원 파이프라인 최적화 ####
 * 파티션 스위칭: 전처리 단계는 AMX 전용 파티션(amx-partition)에서 수행하고, 학습 단계는 GPU 전용 파티션(gpu-partition)으로 자동 전달되는 파이프라인을 구축하여 고가의 GPU 자원 대기 시간을 최소화.
 * 자원 선점 및 해제: 작업이 종료되는 즉시 쿠버네티스 파드가 반납되도록 구성하여 클라우드 비용을 최적화
