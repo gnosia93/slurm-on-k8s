@@ -25,7 +25,7 @@ helm repo update
 helm install keda kedacore/keda \
   --namespace keda --create-namespace
 ```
-slurm 을 업그레이드 한다. --reuse-values 을 사용하여 기존 사용자 설정을 유지한다. 
+기존 설정을 유지하면서 slurm 을 업그레이드 하기 위해 --reuse-values 옵션을 사용한다. 
 ```
 helm update --install slurm oci://ghcr.io/slinkyproject/charts/slurm \
   --set 'controller.metrics.enabled=true' \
@@ -47,6 +47,13 @@ kubectl get apiservice -l app.kubernetes.io/instance=keda
 ```
 export PROMETHEUS_URL=$(..)
 ```
+
+gpu 노드셋 정보를 조회한다.
+```
+slurm-worker-ns-gpu
+...
+```
+
 ```
 cat <<EOF > keda-scaleobject.yaml
 apiVersion: keda.sh/v1alpha1
