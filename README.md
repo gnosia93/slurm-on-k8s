@@ -24,9 +24,9 @@
 
 * [C7. 작업 모니터링 하기](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/7-job-monitoring.md)
 
-* [C8. 데이터 전처리와 체크포인팅](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/8-preprocessing-chekpointing.md)
+* [C8. 데이터 전처리와 체크포인팅](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/8-preprocessing-chekpointing.md)
 
-* [C9. 파이프라인 구성하기]
+* [C9. 파이프라인 구성하기](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/9-making-pipeline.md)
 
 ### _Revison History_ ###
 
