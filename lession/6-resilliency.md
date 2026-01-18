@@ -19,6 +19,12 @@ Slinky 환경에서 장애가 발생하면, Slurm의 작업 관리 메커니즘�
 
 ### 4. Slurm 컨트롤러(Slinky) 장애 ###
 * 고가용성(HA): Slinky는 보통 K8s 상에서 Deployment로 돌아가므로, 컨트롤러 파드가 죽으면 K8s가 즉시 다른 노드에서 살려냅니다. 이때 작업 데이터는 DB(보통 외부 RDS)에 저장되어 있어 상태가 유지됩니다.
+* slurmctld가 죽어도 작업이 유지되는 특성과 Slinky의 etcd 기반 자동 복구를 연결해서 설명
+
+
+
+
+
 
 #### 💡 실무 팁: ####
 sinfo에서 특정 노드가 drain 상태로 멈춰 있다면, 관리자가 scontrol update nodename=[노드명] state=resume 명령어로 수동 복구해줘야 할 수도 있습니다.
