@@ -29,3 +29,7 @@
 ### _Revison History_ ###
 
 * _2026-01-18 Draft Version Uploaded_
+
+### _refs_ ###
+
+* https://slurm.schedmd.com/slinky.html
