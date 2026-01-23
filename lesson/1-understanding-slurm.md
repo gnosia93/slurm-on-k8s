@@ -276,6 +276,8 @@ singularity exec --nv docker://pytorch/pytorch:latest python train.py
 MPI와 GPU(NV) 지원이 강력하며, 사용자가 루트 권한을 가질 수 없어 보안상 매우 안전
 
 #### 2. Docker (NVIDIA Pyxis/Enroot) ####
+NVIDIA Pyxis와 Enroot는 Slurm 클러스터에서 Docker 컨테이너를 마치 일반 프로세스처럼 가볍고 빠르게 실행하기 위해 NVIDIA가 개발한 기술 세트입니다. 
+쉽게 비유하자면, Enroot는 컨테이너를 실행하는 '엔진'이고, Pyxis는 Slurm에서 그 엔진을 쉽게 쓸 수 있게 해주는 '리모컨(플러그인)'입니다
 Docker를 직접 실행하는 대신, NVIDIA가 개발한 Pyxis 플러그인과 Enroot 런타임을 사용하여 Slurm에서 Docker 컨테이너를 네이티브하게 지원할 수 있다.
 ```
 # 별도 변환 없이 Docker 이미지 바로 실행
