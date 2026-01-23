@@ -144,6 +144,7 @@ master_node ansible_host=10.0.0.10
         - slurm_result.rc != 0 
         - "'Already exists' not in slurm_result.stderr"
 ```
+모듈 + 멱등성(Idempotency)
 
 ```
 ansible-playbook -i hosts.ini create_user.yml
