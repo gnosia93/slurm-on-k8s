@@ -145,6 +145,9 @@ master_node ansible_host=10.0.0.10
         - "'Already exists' not in slurm_result.stderr"
 ```
 모듈 + 멱등성(Idempotency)
+* 모듈(Module): user, group, command (실제 작업을 수행하는 부품)
+* 태스크(Task): 모듈을 사용하여 정의한 하나의 작업 단위 (위 코드의 - name: 부분)
+* 플레이북(Playbook): 여러 태스크를 모아놓은 전체 시나리오 파일 (.yml)
 
 ```
 ansible-playbook -i hosts.ini create_user.yml
