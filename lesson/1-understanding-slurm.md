@@ -299,3 +299,39 @@ srun docker run --rm --gpus all --net=host -v /shared_data:/data my_image:latest
 
 * 직접적인 명령어(sbatch, squeue 등) 활용법
 
+
+## EFA 사용을 위해 memlock 설정 ##
+```
+#!/bin/bash
+#SBATCH --job-name=efa-container-train
+#SBATCH --nodes=2              # 2대 이상의 노드에서 분산 학습
+#SBATCH --ntasks-per-node=8    # 노드당 GPU 개수에 맞춤
+#SBATCH --gres=gpu:8           # GPU 할당
+#SBATCH --partition=p4d        # EFA 지원 인스턴스 파티션
+
+# [필수] 메모리 잠금 제한 해제 (OS 레벨의 허가증)
+# ulimit -l (Max Locked Memory)
+# ulimit -s (Max Stack Size)
+ulimit -l unlimited
+ulimit -s unlimited
+
+# [선택] EFA 관련 환경 변수 설정 (성능 최적화)
+export FI_EFA_USE_DEVICE_RDMA=1 # GPU Direct RDMA 활성화
+export FI_PROVIDER=efa          # EFA 프로바이더 강제 지정
+export NCCL_DEBUG=INFO          # EFA 작동 여부 확인용 로그
+
+# Pyxis/Enroot를 사용하는 경우 --container-image 옵션 활용
+srun --container-image="nvcr.io#nvidia/pytorch:23.10-py3" \
+     --container-mounts=/shared:/shared \
+     python -u /shared/train.py
+```
+* ulimit -l unlimited를 실행 노드에서 먼저 선언하면, 그 뒤에 오는 srun 프로세스들이 이 '무제한 권한'을 상속받습니다.
+* Pyxis를 사용 중이라면, srun이 컨테이너를 띄울 때 호스트의 이 설정을 컨테이너 내부 환경까지 그대로 복사해 넣습니다.
+
+아래 코드로 설정이 제대로 되었는지 확인한다. 
+```
+import os
+# 시스템 ulimit 확인 (결과가 18446744073709551615 또는 매우 큰 수면 성공)
+print(f"Memlock limit: {os.resource.getrlimit(os.resource.RLIMIT_MEMLOCK)}")
+```
+
